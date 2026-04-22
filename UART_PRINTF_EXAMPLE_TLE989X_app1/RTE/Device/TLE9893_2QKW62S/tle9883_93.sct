@@ -1,0 +1,121 @@
+#! armclang -E --target=arm-arm-none-eabi -mcpu=cortex-m3 -xc
+; command above MUST be in first line (no comment above!)
+;
+; \version 1.0.0
+; \date    2023-12-04
+
+/*
+;-------- <<< Use Configuration Wizard in Context Menu >>> -------------------
+*/
+; <h> NVM0 Configuration
+;     <o1>  User BSL size (in Bytes)      
+;         <0x1000=> 4K Bytes
+;         <0x2000=> 8K Bytes
+;         <0x3000=> 12K Bytes
+;         <0x4000=> 16K Bytes
+;         <0x5000=> 20K Bytes
+;         <0x6000=> 24K Bytes
+;         <0x7000=> 28K Bytes
+;         <0x8000=> 32K Bytes
+; </h>
+#define __NVM0_BASE      0x11000000
+#define __NVM0_SIZE      0x8000
+
+#define __NVM1_BASE      0x12002000
+#define __NVM1_SIZE      0x3E000
+
+
+#define __PSRAM_BASE      0x18000000
+#define __PSRAM_SIZE      0x2000
+
+; <h> DSRAM Configuration
+;     <o1>  User Data size (in Bytes)      
+;         <0x5B00=> 22K Bytes (DMA in the SDK enabled)
+;         <0x5C00=> 23K Bytes
+; </h>
+#define __DSRAM_BASE      0x18002000
+#define __DSRAM_SIZE      0x5C00
+
+
+
+/*--------------------- Stack / Heap Configuration ---------------------------
+; <h> Stack / Heap Configuration
+;   <o0> Stack Size (in Bytes) <0x0-0xFFFFFFFF:8>
+;   <o1> Heap Size (in Bytes) <0x0-0xFFFFFFFF:8>
+; </h>
+ *----------------------------------------------------------------------------*/
+#define __STACK_SIZE    0x00000200
+#define __HEAP_SIZE     0x00000000
+
+/*
+;------------- <<< end of configuration section >>> ---------------------------
+*/
+
+
+/*----------------------------------------------------------------------------
+  User Stack & Heap boundary definition
+ *----------------------------------------------------------------------------*/
+#define __STACK_TOP    (__DSRAM_BASE + __DSRAM_SIZE)    /* starts at end of RAM */
+#define __HEAP_BASE    (AlignExpr(+0, 8))                           /* starts after RW_RAM section, 8 byte aligned */
+
+
+/*----------------------------------------------------------------------------
+  Region base & size definition
+ *----------------------------------------------------------------------------*/
+
+#define __RW_BASE          ( __RAM_BASE )
+#define __RW_SIZE          ( __RAM_SIZE - __STACK_SIZE - __HEAP_SIZE )
+
+
+/*----------------------------------------------------------------------------
+  Scatter Region definition
+ *----------------------------------------------------------------------------*/
+LR_NVM0 __NVM0_BASE __NVM0_SIZE  {
+  ER_NVM0_BOOTCFG 0x11000000 {
+   *.o (sec_NVM0_BOOTCFG)
+  }
+  
+  ER_NVM0_DEBUG_CONNECT +0 {
+   *.o (sec_NVM0_DEBUG_CONNECT)
+  }
+  
+  ER_NVM0_VECTAB_DEPRECATED 0x11000080 FIXED {
+   *.o (sec_NVM0_VECTAB_DEPRECATED)
+  }
+  
+  ER_NVM0_VECTAB 0x11000100 FIXED {
+   *.o (RESET, +First)
+   *(InRoot$$Sections)
+  }
+
+  ER_NVM0_USERBSL +0 {
+   .ANY (+RO)
+   .ANY (+XO)
+  }
+
+  RW_PSRAM __PSRAM_BASE __PSRAM_SIZE {
+   .ANY (+RW)
+  }
+  
+  RW_DSRAM __DSRAM_BASE __DSRAM_SIZE  {
+   .ANY (+RW +ZI)
+  }
+
+#if __HEAP_SIZE > 0
+  ARM_LIB_HEAP  __HEAP_BASE EMPTY  __HEAP_SIZE  {   ; Reserve empty region for heap
+  }
+#endif
+
+  ARM_LIB_STACK __STACK_TOP EMPTY -__STACK_SIZE {   ; Reserve empty region for stack
+  }
+}
+
+/* 双引导 APP1: 所有代码必须在 NVM0 中，禁用 NVM1 */
+/*
+LR_NVM1 __NVM1_BASE __NVM1_SIZE  {
+  ER_NVM1 +0  {
+   .ANY (+RO)
+   .ANY (+XO)
+  }
+}
+*/

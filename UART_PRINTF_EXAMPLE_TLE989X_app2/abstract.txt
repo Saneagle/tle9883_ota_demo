@@ -1,0 +1,6 @@
+Example TLE9893_2QKW62S_UART_PRINTF
+
+A string HelloWorld is written to the standard output.                  
+A user-defined stdout target is implemented in the uart module.         
+The redirection is established via compiler-I/O-STDOUT RTE setting.     
+The pin P1.1 is used as output which is the debug pin on the USB device.

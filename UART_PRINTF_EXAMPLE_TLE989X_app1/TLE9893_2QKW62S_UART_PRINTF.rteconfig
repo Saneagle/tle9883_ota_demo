@@ -1,0 +1,484 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<configuration xmlns:xs="http://www.w3.org/2001/XMLSchema-instance">
+
+  <packages/>
+
+  <device Dclock="60000000" Dcore="Cortex-M3" DcoreVersion="r0p0" Dendian="Little-endian" Dfamily="TLE98xx Series" Dfpu="NO_FPU" Dmpu="NO_MPU" Dname="TLE9893" DsubFamily="TLE989x Series" Dvariant="TLE9893_2QKW62S" Dvendor="Infineon:7" info="ARM , 31 KB RAM, 272 KB ROM" url="http://www.keil.com/dd2/infineon/tle9893_2qkw62s">
+
+    <package info="Infineon TLE988x/TLE989x Series Device Support" name="TLE988x_9x_DFP" url="https://itools.infineon.com/cmsis_packs/TLE988x_9x/" vendor="Infineon" version="1.0.0"/>
+
+  </device>
+
+  <toolchain Tcompiler="IAR" Toutput="exe"/>
+
+  <components>
+
+    <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="5.5.0">
+
+      <package name="CMSIS" url="http://www.keil.com/pack/" vendor="ARM" version="5.8.0"/>
+
+      <file category="doc" name="CMSIS/Documentation/Core/html/index.html"/>
+
+      <file category="include" name="CMSIS/Core/Include/"/>
+
+      <file category="header" condition="TrustZone" name="CMSIS/Core/Include/tz_context.h"/>
+
+      <file attr="template" category="sourceC" condition="TZ Secure" name="CMSIS/Core/Template/ARMv8-M/main_s.c" select="Secure mode 'main' module for ARMv8-M" version="1.1.1"/>
+
+      <file attr="template" category="sourceC" condition="TZ Secure" name="CMSIS/Core/Template/ARMv8-M/tz_context.c" select="RTOS Context Management (TrustZone for ARMv8-M)" version="1.1.1"/>
+
+    </component>
+
+    <component Cclass="Device" Cgroup="ConfigWizard" Cvendor="Infineon" Cversion="0.0.0" deviceDependent="1">
+
+      <package name="TLE988x_9x_DFP" url="https://itools.infineon.com/cmsis_packs/TLE988x_9x/" vendor="Infineon" version="1.0.0"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/icw_ocn.xml" version="0.5.1"/>
+
+      <file attr="config" category="doc" condition="cond_TLE988x_9x_startup" deviceDependent="1" name="device/tlelib/cfgwiz/xml/tle989x.svd" version="1.0.0"/>
+
+      <file attr="config" category="doc" condition="cond_TLE988x_9x_64pin" deviceDependent="1" name="device/tlelib/cfgwiz/xml/tle989x_64.pin" version="0.5.0"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/adc1.py" version="0.1.5"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/adc2.py" version="0.1.7"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/ccu7_calc.py" version="0.1.6"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/scu.py" version="0.1.2"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/timer2x.py" version="0.1.4"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/uart.py" version="0.1.3"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/bsl_defines_inc_save_handler.py" version="0.2.2"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/icw_ocn_adc1.xml" version="0.1.3"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/icw_ocn_adc2.xml" version="0.0.6"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/icw_ocn_BDRV.xml" version="0.2.8"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/icw_ocn_bemf.xml" version="0.0.7"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/icw_ocn_bsl.xml" version="0.1.0"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/icw_ocn_cantrx.xml" version="0.0.5"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/icw_ocn_CCU7.xml" version="0.3.3"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/icw_ocn_CSACSC.xml" version="0.1.1"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/icw_ocn_dma.xml" version="0.0.6"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/icw_ocn_gpio.xml" version="0.2.1"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/icw_ocn_gpt12.xml" version="0.1.3"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/icw_ocn_interrupt.xml" version="0.3.4"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/icw_ocn_mon.xml" version="0.1.4"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/icw_ocn_pmu.xml" version="0.1.7"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/icw_ocn_scu.xml" version="0.3.0"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/icw_ocn_sdadc.xml" version="0.0.7"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/icw_ocn_SSC.xml" version="0.0.9"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/icw_ocn_timer2x.xml" version="0.1.7"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/icw_ocn_UARTx.xml" version="0.1.7"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_adc1_calibration.xml" version="0.2.1"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_adc1_channel.xml" version="0.3.2"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_adc1_channel_class.xml" version="0.2.1"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_adc1_compare.xml" version="0.2.2"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_adc1_filter.xml" version="0.2.1"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_adc1_sequencer.xml" version="0.2.1"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_adc1_sequencer_slots.xml" version="0.2.1"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_adc1_sequencer_variables.xml" version="0.2.1"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_adc1_variables2.xml" version="0.2.1"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_adc2_channel.xml" version="0.0.5"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_adc2_channel_class.xml" version="0.0.2"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_adc2_channel_user.xml" version="0.0.5"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_adc2_compare.xml" version="0.0.5"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_adc2_compare_fix.xml" version="0.0.5"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_adc2_compare_fix_nmi_up.xml" version="0.0.5"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_adc2_compare_fix_nmi_lo.xml" version="0.0.5"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_adc2_compare_fix_nmi_uplo.xml" version="0.0.5"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_adc2_filter.xml" version="0.0.2"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_adc2_filter_fix.xml" version="0.0.2"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_adc2_sequencer.xml" version="0.0.4"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_adc2_sequencer_slots.xml" version="0.0.2"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_bdrv_currentsConst.xml" version="0.1.5"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_bdrv_currentsSeq.xml" version="0.1.5"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_bdrv_timingsConst.xml" version="0.1.5"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_bdrv_timingsSeq.xml" version="0.1.5"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_bdrv_hb_chrg_dischrg_settings.xml" version="0.0.5"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_bdrv_hb_graph.xml" version="0.0.3"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_bdrv_hb_settings.xml" version="0.0.2"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_ccu7_cmpval_input.xml" version="0.1.2"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_ccu7_perval_input.xml" version="0.1.2"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_ccu7_sum_cmpval.xml" version="0.1.3"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_ccu7_sum_t1x.xml" version="0.1.2"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_ccu7_t12.xml" version="0.1.7"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_ccu7_t13.xml" version="0.1.4"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_ccu7_t141516.xml" version="0.1.4"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_ccu7_deadtime_graph.xml" version="0.0.3"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_dma_mode.xml" version="0.0.3"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_gpio_p0p1.xml" version="0.1.2"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_gpio_p2.xml" version="0.1.2"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_gpt12_mode.xml" version="0.3.2"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_gpt12_timer.xml" version="0.1.2"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_interrupt_overview_adc1.xml" version="0.1.2"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_interrupt_overview_adc2.xml" version="0.1.5"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_interrupt_overview_bemf_sdadc.xml" version="0.3.1"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_interrupt_overview_can.xml" version="0.1.3"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_interrupt_overview_ccu7.xml" version="0.1.2"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_interrupt_overview_dma.xml" version="0.1.2"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_interrupt_overview_extint.xml" version="0.2.2"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_interrupt_overview_gpt12.xml" version="0.1.2"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_interrupt_overview_memctrl.xml" version="0.1.2"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_interrupt_overview_mon.xml" version="0.1.2"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_interrupt_overview_ssc.xml" version="0.1.3"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_interrupt_overview_t20.xml" version="0.1.2"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_interrupt_overview_t21.xml" version="0.1.2"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_interrupt_overview_uart.xml" version="0.1.2"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_interrupt_overview_warn.xml" version="0.1.4"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_pmu_gpiowake.xml" version="0.2.1"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_pmu_interrupt.xml" version="0.1.2"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_pmu_timer.xml" version="0.1.3"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_sdadc_channel.xml" version="0.2.3"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_sdadc_interrupt.xml" version="0.1.3"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_sdadc_timers.xml" version="0.1.3"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_ssc_graph.xml" version="0.1.2"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_ssc_mode.xml" version="0.1.5"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_ssc_pinsel.xml" version="0.2.1"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_ssc_timer.xml" version="0.1.4"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_t2x_graph.xml" version="0.1.3"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_t2x_mode.xml" version="0.3.2"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_uart_graph.xml" version="0.1.4"/>
+
+      <file attr="config" category="doc" deviceDependent="1" name="device/tlelib/cfgwiz/xml/template_uart_mode.xml" version="0.3.2"/>
+
+      <file attr="config" category="doc" condition="cond_TLE9893_2QKW62S" deviceDependent="1" name="device/tlelib/cfgwiz/defines/TLE9893_2QKW62S/config.icwp" version="0.0.0"/>
+
+      <file attr="config" category="header" condition="cond_TLE9893_2QKW62S" deviceDependent="1" name="device/tlelib/cfgwiz/defines/TLE9893_2QKW62S/adc1_defines.h" version="0.0.0"/>
+
+      <file attr="config" category="header" condition="cond_TLE9893_2QKW62S" deviceDependent="1" name="device/tlelib/cfgwiz/defines/TLE9893_2QKW62S/adc2_defines.h" version="0.0.0"/>
+
+      <file attr="config" category="header" condition="cond_TLE9893_2QKW62S" deviceDependent="1" name="device/tlelib/cfgwiz/defines/TLE9893_2QKW62S/bdrv_defines.h" version="0.0.0"/>
+
+      <file attr="config" category="header" condition="cond_TLE9893_2QKW62S" deviceDependent="1" name="device/tlelib/cfgwiz/defines/TLE9893_2QKW62S/bsl_defines.h" version="0.0.0"/>
+
+      <file attr="config" category="doc" condition="cond_TLE9893_2QKW62S_IAR" deviceDependent="1" name="device/tlelib/cfgwiz/defines/TLE9893_2QKW62S/bsl_defines_IAR.inc" version="0.0.0"/>
+
+      <file attr="config" category="header" condition="cond_TLE9893_2QKW62S" deviceDependent="1" name="device/tlelib/cfgwiz/defines/TLE9893_2QKW62S/cantrx_defines.h" version="0.0.0"/>
+
+      <file attr="config" category="header" condition="cond_TLE9893_2QKW62S" deviceDependent="1" name="device/tlelib/cfgwiz/defines/TLE9893_2QKW62S/ccu7_defines.h" version="0.0.0"/>
+
+      <file attr="config" category="header" condition="cond_TLE9893_2QKW62S" deviceDependent="1" name="device/tlelib/cfgwiz/defines/TLE9893_2QKW62S/csacsc_defines.h" version="0.0.0"/>
+
+      <file attr="config" category="header" condition="cond_TLE9893_2QKW62S" deviceDependent="1" name="device/tlelib/cfgwiz/defines/TLE9893_2QKW62S/dma_defines.h" version="0.0.0"/>
+
+      <file attr="config" category="header" condition="cond_TLE9893_2QKW62S" deviceDependent="1" name="device/tlelib/cfgwiz/defines/TLE9893_2QKW62S/gpio_defines.h" version="0.0.0"/>
+
+      <file attr="config" category="header" condition="cond_TLE9893_2QKW62S" deviceDependent="1" name="device/tlelib/cfgwiz/defines/TLE9893_2QKW62S/gpt12_defines.h" version="0.0.0"/>
+
+      <file attr="config" category="header" condition="cond_TLE9893_2QKW62S" deviceDependent="1" name="device/tlelib/cfgwiz/defines/TLE9893_2QKW62S/isr_defines.h" version="0.0.0"/>
+
+      <file attr="config" category="header" condition="cond_TLE9893_2QKW62S" deviceDependent="1" name="device/tlelib/cfgwiz/defines/TLE9893_2QKW62S/pmu_defines.h" version="0.0.0"/>
+
+      <file attr="config" category="header" condition="cond_TLE9893_2QKW62S" deviceDependent="1" name="device/tlelib/cfgwiz/defines/TLE9893_2QKW62S/scu_defines.h" version="0.0.0"/>
+
+      <file attr="config" category="header" condition="cond_TLE9893_2QKW62S" deviceDependent="1" name="device/tlelib/cfgwiz/defines/TLE9893_2QKW62S/sdadc_defines.h" version="0.0.0"/>
+
+      <file attr="config" category="header" condition="cond_TLE9893_2QKW62S" deviceDependent="1" name="device/tlelib/cfgwiz/defines/TLE9893_2QKW62S/ssc_defines.h" version="0.0.0"/>
+
+      <file attr="config" category="header" condition="cond_TLE9893_2QKW62S" deviceDependent="1" name="device/tlelib/cfgwiz/defines/TLE9893_2QKW62S/timer2x_defines.h" version="0.0.0"/>
+
+      <file attr="config" category="header" condition="cond_TLE9893_2QKW62S" deviceDependent="1" name="device/tlelib/cfgwiz/defines/TLE9893_2QKW62S/uart_defines.h" version="0.0.0"/>
+
+    </component>
+
+    <component Cclass="Device" Cgroup="Startup" Cvendor="Infineon" Cversion="0.4.0" deviceDependent="1">
+
+      <package name="TLE988x_9x_DFP" url="https://itools.infineon.com/cmsis_packs/TLE988x_9x/" vendor="Infineon" version="1.0.0"/>
+
+      <file attr="config" category="source" condition="cond_TLE988x_9x_IAR" deviceDependent="1" name="device/startup/c/startup_tle989x.c" version="0.1.1"/>
+
+      <file attr="config" category="linkerScript" condition="cond_TLE9893_IAR" deviceDependent="1" name="device/startup/c/TLE9893.icf" version="0.1.0"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/startup/src/system_tle989x.c" version="0.4.6"/>
+
+      <file attr="config" category="header" deviceDependent="1" name="device/startup/inc/system_tle989x.h" version="0.4.6"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/tle_device.c" version="0.3.7"/>
+
+      <file attr="config" category="header" deviceDependent="1" name="device/tlelib/inc/tle_device.h" version="0.3.7"/>
+
+      <file attr="config" category="header" deviceDependent="1" name="device/tlelib/inc/tle_variants.h" version="0.4.4"/>
+
+      <file attr="config" category="header" deviceDependent="1" name="device/tlelib/inc/types.h" version="0.4.2"/>
+
+      <file attr="config" category="header" deviceDependent="1" name="device/tlelib/inc/error_codes.h" version="0.3.1"/>
+
+      <file attr="config" category="header" deviceDependent="1" name="device/tlelib/inc/cmsis_misra.h" version="0.2.4"/>
+
+      <file attr="config" category="header" deviceDependent="1" name="device/tlelib/inc/tle989x.h" version="0.6.0"/>
+
+      <file attr="template" category="sourceC" deviceDependent="1" name="device/tlelib/main/main.c" select="Simple Main" version="1.5.5"/>
+
+      <file category="doc" deviceDependent="1" name="documents/html/index.html"/>
+
+    </component>
+
+    <component Cclass="Device" Cgroup="TLELib" Csub="ADC1" Cvendor="Infineon" Cversion="0.5.0" deviceDependent="1">
+
+      <package name="TLE988x_9x_DFP" url="https://itools.infineon.com/cmsis_packs/TLE988x_9x/" vendor="Infineon" version="1.0.0"/>
+
+      <file attr="config" category="header" deviceDependent="1" name="device/tlelib/inc/adc1.h" version="0.5.0"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/adc1.c" version="0.5.0"/>
+
+    </component>
+
+    <component Cclass="Device" Cgroup="TLELib" Csub="ADC2" Cvendor="Infineon" Cversion="0.5.7" deviceDependent="1">
+
+      <package name="TLE988x_9x_DFP" url="https://itools.infineon.com/cmsis_packs/TLE988x_9x/" vendor="Infineon" version="1.0.0"/>
+
+      <file attr="config" category="header" deviceDependent="1" name="device/tlelib/inc/adc2.h" version="0.5.7"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/adc2.c" version="0.5.7"/>
+
+    </component>
+
+    <component Cclass="Device" Cgroup="TLELib" Csub="BDRV" Cvendor="Infineon" Cversion="0.8.3" deviceDependent="1">
+
+      <package name="TLE988x_9x_DFP" url="https://itools.infineon.com/cmsis_packs/TLE988x_9x/" vendor="Infineon" version="1.0.0"/>
+
+      <file attr="config" category="header" deviceDependent="1" name="device/tlelib/inc/bdrv.h" version="0.8.3"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/bdrv.c" version="0.8.3"/>
+
+    </component>
+
+    <component Cclass="Device" Cgroup="TLELib" Csub="BOOTROM" Cvendor="Infineon" Cversion="0.3.3" deviceDependent="1">
+
+      <package name="TLE988x_9x_DFP" url="https://itools.infineon.com/cmsis_packs/TLE988x_9x/" vendor="Infineon" version="1.0.0"/>
+
+      <file attr="config" category="header" deviceDependent="1" name="device/tlelib/inc/bootrom.h" version="0.3.3"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/bootrom.c" version="0.3.3"/>
+
+    </component>
+
+    <component Cclass="Device" Cgroup="TLELib" Csub="CSACSC" Cvendor="Infineon" Cversion="0.2.8" deviceDependent="1">
+
+      <package name="TLE988x_9x_DFP" url="https://itools.infineon.com/cmsis_packs/TLE988x_9x/" vendor="Infineon" version="1.0.0"/>
+
+      <file attr="config" category="header" deviceDependent="1" name="device/tlelib/inc/csacsc.h" version="0.2.8"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/csacsc.c" version="0.2.8"/>
+
+    </component>
+
+    <component Cclass="Device" Cgroup="TLELib" Csub="GPIO" Cvendor="Infineon" Cversion="0.2.6" deviceDependent="1">
+
+      <package name="TLE988x_9x_DFP" url="https://itools.infineon.com/cmsis_packs/TLE988x_9x/" vendor="Infineon" version="1.0.0"/>
+
+      <file attr="config" category="header" deviceDependent="1" name="device/tlelib/inc/gpio.h" version="0.2.6"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/gpio.c" version="0.2.6"/>
+
+    </component>
+
+    <component Cclass="Device" Cgroup="TLELib" Csub="INT" Cvendor="Infineon" Cversion="0.3.1" deviceDependent="1">
+
+      <package name="TLE988x_9x_DFP" url="https://itools.infineon.com/cmsis_packs/TLE988x_9x/" vendor="Infineon" version="1.0.0"/>
+
+      <file attr="config" category="header" deviceDependent="1" name="device/tlelib/inc/int.h" version="0.3.1"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/int.c" version="0.3.1"/>
+
+    </component>
+
+    <component Cclass="Device" Cgroup="TLELib" Csub="ISR" Cvendor="Infineon" Cversion="0.5.1" deviceDependent="1">
+
+      <package name="TLE988x_9x_DFP" url="https://itools.infineon.com/cmsis_packs/TLE988x_9x/" vendor="Infineon" version="1.0.0"/>
+
+      <file attr="config" category="header" deviceDependent="1" name="device/tlelib/inc/isr.h" version="0.5.1"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/isr_exceptions.c" version="0.5.1"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/isr_nvic_irq0_handler.c" version="0.5.1"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/isr_nvic_irq1_handler.c" version="0.5.1"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/isr_nvic_irq2_handler.c" version="0.5.1"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/isr_nvic_irq3_handler.c" version="0.5.1"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/isr_nvic_irq4_handler.c" version="0.5.1"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/isr_nvic_irq5_handler.c" version="0.5.1"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/isr_nvic_irq7_handler.c" version="0.5.1"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/isr_nvic_irq8_handler.c" version="0.5.1"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/isr_nvic_irq9_handler.c" version="0.5.1"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/isr_nvic_irq10_handler.c" version="0.5.1"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/isr_nvic_irq11_handler.c" version="0.5.1"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/isr_nvic_irq12_handler.c" version="0.5.1"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/isr_nvic_irq13_handler.c" version="0.5.1"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/isr_nvic_irq14_handler.c" version="0.5.1"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/isr_nvic_irq15_handler.c" version="0.5.1"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/isr_nvic_irq16_handler.c" version="0.5.1"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/isr_nvic_irq17_handler.c" version="0.5.1"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/isr_nvic_irq18_handler.c" version="0.5.1"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/isr_nvic_irq19_handler.c" version="0.5.1"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/isr_nvic_irq20_handler.c" version="0.5.1"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/isr_nvic_irq21_handler.c" version="0.5.1"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/isr_nvic_irq22_handler.c" version="0.5.1"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/isr_nvic_irq23_handler.c" version="0.5.1"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/isr_nvic_irq24_handler.c" version="0.5.1"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/isr_nvic_irq25_handler.c" version="0.5.1"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/isr_nvic_irq26_handler.c" version="0.5.1"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/isr_nvic_irq27_handler.c" version="0.5.1"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/isr_nvic_irq28_handler.c" version="0.5.1"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/isr_nvic_irq29_handler.c" version="0.5.1"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/isr_nvic_irq30_handler.c" version="0.5.1"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/isr_nvic_irq31_handler.c" version="0.5.1"/>
+
+    </component>
+
+    <component Cclass="Device" Cgroup="TLELib" Csub="PMU" Cvendor="Infineon" Cversion="0.6.0" deviceDependent="1">
+
+      <package name="TLE988x_9x_DFP" url="https://itools.infineon.com/cmsis_packs/TLE988x_9x/" vendor="Infineon" version="1.0.0"/>
+
+      <file attr="config" category="header" deviceDependent="1" name="device/tlelib/inc/pmu.h" version="0.6.0"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/pmu.c" version="0.6.0"/>
+
+    </component>
+
+    <component Cclass="Device" Cgroup="TLELib" Csub="SCU" Cvendor="Infineon" Cversion="0.5.5" deviceDependent="1">
+
+      <package name="TLE988x_9x_DFP" url="https://itools.infineon.com/cmsis_packs/TLE988x_9x/" vendor="Infineon" version="1.0.0"/>
+
+      <file attr="config" category="header" deviceDependent="1" name="device/tlelib/inc/scu.h" version="0.5.5"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/scu.c" version="0.5.5"/>
+
+    </component>
+
+    <component Cclass="Device" Cgroup="TLELib" Csub="UART" Cvendor="Infineon" Cversion="0.6.0" deviceDependent="1">
+
+      <package name="TLE988x_9x_DFP" url="https://itools.infineon.com/cmsis_packs/TLE988x_9x/" vendor="Infineon" version="1.0.0"/>
+
+      <file attr="config" category="header" deviceDependent="1" name="device/tlelib/inc/uart.h" version="0.6.0"/>
+
+      <file attr="config" category="source" deviceDependent="1" name="device/tlelib/src/uart.c" version="0.6.0"/>
+
+    </component>
+
+  </components>
+
+  <apis/>
+
+</configuration>
+

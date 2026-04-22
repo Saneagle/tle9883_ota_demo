@@ -1,0 +1,81 @@
+# ===== Build output =====
+build/
+Build/
+bin/
+obj/
+out/
+Debug/
+Release/
+
+# ===== Generic object/binary files =====
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dll
+*.dylib
+*.elf
+*.axf
+*.hex
+*.bin
+*.map
+*.lst
+*.s19
+
+# ===== Dependency / intermediate files =====
+*.d
+*.dep
+*.su
+*.idb
+*.pdb
+
+# ===== Temporary files =====
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~
+*.log
+
+# ===== OS files =====
+.DS_Store
+Thumbs.db
+
+# ===== VS Code =====
+.vscode/
+
+# ===== CMake =====
+CMakeFiles/
+CMakeCache.txt
+cmake-build-*/
+compile_commands.json
+Makefile
+
+# ===== GCC / Make =====
+*.mk
+
+# ===== Keil MDK =====
+*.uvguix.*
+*.uvoptx
+*.dep
+Listings/
+Objects/
+
+# ===== IAR =====
+settings/
+*.ewd
+*.ewp.tmp
+*.eww.tmp
+Debug/
+Exe/
+
+# ===== STM32CubeIDE / Eclipse =====
+.metadata/
+.settings/
+*.launch
+
+# ===== Segger Embedded Studio =====
+emBuild/
+*.emSession
