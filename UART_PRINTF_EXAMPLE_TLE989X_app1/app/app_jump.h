@@ -33,11 +33,12 @@
 #define APP2_OFFSET     0x4000u   /* 16KB 偏移 */
 
 /* UBSL 基地址 */
-#define UBSL_BASE_ADDR  0x11000000u
+#define UBSL_BASE_ADDR  0x12002000u
 
 /* 应用程序地址 */
 #define APP1_ADDR       (UBSL_BASE_ADDR + APP1_OFFSET)
-#define APP2_ADDR       (UBSL_BASE_ADDR + APP2_OFFSET)
+//#define APP2_ADDR       (UBSL_BASE_ADDR + APP2_OFFSET)
+#define APP2_ADDR       UBSL_BASE_ADDR
 
 /*******************************************************************************
 **                         Global Function Declarations                       **

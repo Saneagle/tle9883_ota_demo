@@ -70,8 +70,8 @@
 /*----------------------------------------------------------------------------
   Scatter Region definition
  *----------------------------------------------------------------------------*/
-LR_NVM0 __NVM0_BASE __NVM0_SIZE  {
-  ER_NVM0_BOOTCFG 0x11004000 {
+LR_NVM0 __NVM1_BASE __NVM1_SIZE  {
+  ER_NVM0_BOOTCFG 0x12002000 {
    *.o (sec_NVM0_BOOTCFG)
   }
   
@@ -83,7 +83,7 @@ LR_NVM0 __NVM0_BASE __NVM0_SIZE  {
 ;   *.o (sec_NVM0_VECTAB_DEPRECATED)
 ;  }
   
-  ER_NVM0_VECTAB 0x11004100 FIXED {
+  ER_NVM0_VECTAB 0x12002100 FIXED {
    *.o (RESET, +First)
    *(InRoot$$Sections)
   }
