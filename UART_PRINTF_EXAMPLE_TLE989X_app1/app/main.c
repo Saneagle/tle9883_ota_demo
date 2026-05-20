@@ -136,18 +136,18 @@ sint32 main(void)
       {
         jump_triggered = 1;
         
-        printf("\r\nTime to jump!\r\n");
+//        printf("\r\nTime to jump!\r\n");
         
 #if (APP_VERSION == 1)
         /* 工程1跳转到工程2 */
-        Jump_To_App2();
+//        Jump_To_App2();
 #else
         /* 工程2跳转到工程1 */
         Jump_To_App1();
 #endif
         
         /* 如果跳转失败，打印错误信息 */
-        printf("Jump failed! Staying in APP%d\r\n", APP_VERSION);
+//        printf("Jump failed! Staying in APP%d\r\n", APP_VERSION);
         jump_triggered = 0;  /* 重置标志，可以再次尝试 */
         delay_counter = 0;
       }
@@ -155,8 +155,49 @@ sint32 main(void)
       /* 每秒打印一次心跳信息 */
       if ((delay_counter % 1000) == 0)
       {
-        printf("APP%d running... %d sec\r\n", APP_VERSION, delay_counter / 1000);
+//        printf("APP%d running... %d sec\r\n", APP_VERSION, delay_counter / 1000);
       }
     }
+  }
+}
+
+
+#define BUFFER_SIZE (20U)
+
+/*******************************************************************************
+**                                 Variables                                  **
+*******************************************************************************/
+static volatile bool b_cmdTrigger = true;
+static volatile uint8 u8_readCnt = 0;
+static uint8 u8_buffer[BUFFER_SIZE];
+
+/* UART receive ISR */
+void uart_receive()
+{
+  /* Check for buffer overflow */
+  if (u8_readCnt < BUFFER_SIZE)
+  {
+    /* Receive byte from P1.2 */
+    u8_buffer[u8_readCnt] = (uint8) stdin_getchar();
+    
+    /* Echo byte to stdout to show character on console */
+    printf("%c", u8_buffer[u8_readCnt]);
+    
+    /* Check if received character was a newline */
+    // if (u8_buffer[u8_readCnt] == 0x0d)
+    // {
+    //   /* Add a final 0x00 to the string buffer */
+    //   u8_buffer[u8_readCnt] = 0x00;
+      
+    //   /* Trigger command handler */
+    //   b_cmdTrigger = true;
+    // }
+    /* Increment receive counter for new character */
+    u8_readCnt++;
+  }
+  else
+  {
+    /* Receive buffer is full -> handle command without newline */
+    b_cmdTrigger = true;
   }
 }

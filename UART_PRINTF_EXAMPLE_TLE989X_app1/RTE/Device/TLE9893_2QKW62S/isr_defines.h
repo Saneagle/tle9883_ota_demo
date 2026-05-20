@@ -1542,11 +1542,11 @@
 
 #define UART1_EOS_INT_EN (0x0u) /*decimal 0*/
 
-#define UART1_IEN (0x0u) /*decimal 0*/
+#define UART1_IEN (0x2u) /*decimal 0*/
 
-#define UART1_RI_CALLBACK place_your_function_callback_here
+#define UART1_RI_CALLBACK uart_receive
 
-#define UART1_RI_INT_EN (0x0u) /*decimal 0*/
+#define UART1_RI_INT_EN (0x1u) /*decimal 0*/
 
 #define UART1_SYNCERR_CALLBACK place_your_function_callback_here
 

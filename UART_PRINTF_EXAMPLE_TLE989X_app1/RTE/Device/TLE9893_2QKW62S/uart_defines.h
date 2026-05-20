@@ -48,11 +48,11 @@
 
 #define UART1_GLOBCONF_EN (0x1u) /*decimal 1*/
 
-#define UART1_INSEL (0x0u) /*decimal 0*/
+#define UART1_INSEL (0x1u) /*decimal 0*/
 
 #define UART1_LINCON (0x0u) /*decimal 0*/
 
-#define UART1_SCON (0x2u) /*decimal 2*/
+#define UART1_SCON (0x1au) /*decimal 2*/
 
 #define UART1_STD_EN (0x1u) /*decimal 1*/
 
