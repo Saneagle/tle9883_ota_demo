@@ -70,6 +70,7 @@
 #include "tle_device.h"
 #include "types.h"
 #include "app_jump.h"
+#include "uart_upgrade.h"
 
 /*******************************************************************************
 **                            宏定义                                          **
@@ -83,8 +84,7 @@
 /*******************************************************************************
 **                         全局变量                                           **
 *******************************************************************************/
-static uint32_t delay_counter = 0;
-static uint8_t jump_triggered = 0;
+/* 下面的变量已不再用于固件升级，仅作为示例保留 */
 
 sint32 main(void)
 {
@@ -103,17 +103,21 @@ sint32 main(void)
     printf("TLE_init failed with code: %d\r\n", s8_returnCode);
   }
 
+  /* 初始化固件升级模块 */
+  UART_Upgrade_Init();
+
   /* 打印应用程序版本信息 */
   printf("\r\n");
   printf("========================================\r\n");
-  printf("  Application %d - BSL Jump Test\r\n", APP_VERSION);
+  printf("  Application %d - UART Firmware Upgrade\r\n", APP_VERSION);
   printf("========================================\r\n");
   printf("This is Application %d running...\r\n", APP_VERSION);
+  printf("Firmware upgrade ready via UART\r\n");
   
 #if (APP_VERSION == 1)
-  printf("APP1 will jump to APP2 in %d ms\r\n", JUMP_DELAY_MS);
-#else
-  printf("APP2 will jump to APP1 in %d ms\r\n", JUMP_DELAY_MS);
+  printf("\r\nUpgrade Protocol Commands:\r\n");
+  printf("  - Send upgrade firmware via UART\r\n");
+  printf("  - Use provided Python script for upgrade\r\n");
 #endif
   
   printf("\r\n");
@@ -123,41 +127,37 @@ sint32 main(void)
     /* Main watchdog service */
     (void) PMU_serviceFailSafeWatchdog();
     
-    /* 简单延时实现（每次循环约1ms） */
-    if (!jump_triggered)
+    /* 处理固件升级状态机 */
+    UART_Upgrade_Process();
+    
+    /* 检查升级是否完成 */
+    if (UART_Upgrade_GetState() == UPGRADE_COMPLETE)
     {
-      delay_counter++;
+      /* 升级完成，延时后跳转到新应用 */
+      static uint32_t jump_delay = 0;
+      jump_delay++;
       
-      /* 简单的延时循环 */
-      for (volatile uint32_t i = 0; i < 1000; i++);
-      
-      /* 达到延时时间后执行跳转 */
-      if (delay_counter >= JUMP_DELAY_MS)
+      if (jump_delay > 3000000)  /* 延时约3秒 */
       {
-        jump_triggered = 1;
-        
-//        printf("\r\nTime to jump!\r\n");
+        printf("\r\nJumping to upgraded application...\r\n\r\n");
         
 #if (APP_VERSION == 1)
-        /* 工程1跳转到工程2 */
-//        Jump_To_App2();
+        Jump_To_App2();
 #else
-        /* 工程2跳转到工程1 */
         Jump_To_App1();
 #endif
         
-        /* 如果跳转失败，打印错误信息 */
-//        printf("Jump failed! Staying in APP%d\r\n", APP_VERSION);
-        jump_triggered = 0;  /* 重置标志，可以再次尝试 */
-        delay_counter = 0;
-      }
-      
-      /* 每秒打印一次心跳信息 */
-      if ((delay_counter % 1000) == 0)
-      {
-//        printf("APP%d running... %d sec\r\n", APP_VERSION, delay_counter / 1000);
+        /* 如果跳转失败，重置状态 */
+        printf("Jump failed! Please reset manually.\r\n");
+        while(1)
+        {
+          (void) PMU_serviceFailSafeWatchdog();
+        }
       }
     }
+    
+    /* 简单延时 */
+    for (volatile uint32_t i = 0; i < 100; i++);
   }
 }
 
@@ -174,25 +174,23 @@ static uint8 u8_buffer[BUFFER_SIZE];
 /* UART receive ISR */
 void uart_receive()
 {
+  uint8 received_byte;
+  
+  /* Receive byte from P1.2 */
+  received_byte = (uint8) stdin_getchar();
+  
+  /* 将接收到的字节传递给升级模块处理 */
+  UART_Upgrade_ProcessByte(received_byte);
+  
+  /* 旧的缓冲区处理代码（如果需要保留） */
   /* Check for buffer overflow */
   if (u8_readCnt < BUFFER_SIZE)
   {
-    /* Receive byte from P1.2 */
-    u8_buffer[u8_readCnt] = (uint8) stdin_getchar();
+    u8_buffer[u8_readCnt] = received_byte;
     
     /* Echo byte to stdout to show character on console */
-    printf("%c", u8_buffer[u8_readCnt]);
+    /* printf("%c", u8_buffer[u8_readCnt]); */  /* 注释掉回显，避免干扰协议 */
     
-    /* Check if received character was a newline */
-    // if (u8_buffer[u8_readCnt] == 0x0d)
-    // {
-    //   /* Add a final 0x00 to the string buffer */
-    //   u8_buffer[u8_readCnt] = 0x00;
-      
-    //   /* Trigger command handler */
-    //   b_cmdTrigger = true;
-    // }
-    /* Increment receive counter for new character */
     u8_readCnt++;
   }
   else
