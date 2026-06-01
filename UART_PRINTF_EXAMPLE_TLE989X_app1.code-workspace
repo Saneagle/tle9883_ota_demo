@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "UART_PRINTF_EXAMPLE_TLE989X_app1"
+		},
+		{
+			"path": "../NVM_PROG_UCODE_EXAMPLE_TLE989X"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"tle_device.h": "c",
+			"pmu.h": "c"
+		}
+	}
+}

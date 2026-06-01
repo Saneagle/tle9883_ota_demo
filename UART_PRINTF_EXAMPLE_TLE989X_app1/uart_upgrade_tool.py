@@ -41,7 +41,7 @@ MAX_PACKET_SIZE = 128
 class UARTUpgrader:
     """UART固件升级器类"""
     
-    def __init__(self, port, baudrate=115200, timeout=2):
+    def __init__(self, port, baudrate=115200, timeout=2, debug=False, retry_count=3, packet_delay=0.01):
         """
         初始化升级器
         
@@ -49,10 +49,16 @@ class UARTUpgrader:
             port: 串口号（如 'COM3' 或 '/dev/ttyUSB0'）
             baudrate: 波特率
             timeout: 超时时间（秒）
+            debug: 是否显示调试信息
+            retry_count: 失败重试次数
+            packet_delay: 数据包之间的延时（秒）
         """
         self.port = port
         self.baudrate = baudrate
         self.timeout = timeout
+        self.debug = debug
+        self.retry_count = retry_count
+        self.packet_delay = packet_delay
         self.ser = None
         
     def open(self):
@@ -67,7 +73,28 @@ class UARTUpgrader:
                 timeout=self.timeout
             )
             print(f"串口 {self.port} 已打开 (波特率: {self.baudrate})")
-            time.sleep(0.5)  # 等待串口稳定
+            
+            # 等待设备启动并清空缓冲区
+            print("等待设备初始化...")
+            time.sleep(1.0)  # 给设备更多启动时间
+            
+            # 读取并显示设备启动时的调试信息
+            if self.ser.in_waiting > 0:
+                startup_data = self.ser.read(self.ser.in_waiting)
+                print(f"[设备启动信息] 收到 {len(startup_data)} 字节")
+                if self.debug:
+                    try:
+                        text = startup_data.decode('ascii', errors='ignore')
+                        if text.strip():
+                            print(f"  内容: {text}")
+                    except:
+                        print(f"  HEX: {startup_data.hex()}")
+            
+            # 清空输入输出缓冲区，确保干净的起始状态
+            self.ser.reset_input_buffer()
+            self.ser.reset_output_buffer()
+            print("串口缓冲区已清空，准备通信\n")
+            
             return True
         except Exception as e:
             print(f"打开串口失败: {e}")
@@ -126,6 +153,10 @@ class UARTUpgrader:
     def send_frame(self, frame):
         """发送帧"""
         if self.ser and self.ser.is_open:
+            if self.debug:
+                print(f"\n[DEBUG] 发送: {frame.hex()}")
+            # 清空输入缓冲区，避免旧数据干扰
+            self.ser.reset_input_buffer()
             self.ser.write(frame)
             self.ser.flush()
     
@@ -143,8 +174,13 @@ class UARTUpgrader:
             # 读取应答帧：0x5A + ACK + CRC16 = 4字节
             response = self.ser.read(4)
             
+            if self.debug:
+                print(f"\n[DEBUG] 接收: {response.hex()} (长度: {len(response)})")
+            
             if len(response) < 4:
                 print(f"应答超时 (收到 {len(response)} 字节)")
+                if len(response) > 0:
+                    print(f"  收到数据: {response.hex()}")
                 return False
             
             header = response[0]
@@ -155,7 +191,7 @@ class UARTUpgrader:
             crc_calc = self.crc16(response[0:2])
             
             if crc_calc != crc_recv:
-                print(f"应答CRC错误")
+                print(f"应答CRC错误: 收到=0x{crc_recv:04X}, 计算=0x{crc_calc:04X}, 原始数据={response.hex()}")
                 return False
             
             if header != FRAME_HEADER:
@@ -181,17 +217,73 @@ class UARTUpgrader:
             print(f"等待应答异常: {e}")
             return False
     
-    def start_upgrade(self, firmware_size):
+    def uart_send_back(self, wait_time=2.0, read_timeout=0.5):
+        """
+        读取并打印UART接收到的所有数据（调试用）
+        
+        Args:
+            wait_time: 等待设备发送数据的总时间（秒）
+            read_timeout: 两次读取之间的间隔时间（秒）
+        
+        Returns:
+            读取到的字节数据
+        """
+        if not self.ser or not self.ser.is_open:
+            return b''
+        
+        print(f"\n[等待UART数据] 最多等待 {wait_time} 秒...")
+        all_data = b''
+        start_time = time.time()
+        
+        # 循环读取，直到超时或一段时间内没有新数据
+        while time.time() - start_time < wait_time:
+            available = self.ser.in_waiting
+            
+            if available > 0:
+                # 有数据，读取
+                chunk = self.ser.read(available)
+                all_data += chunk
+                print(f"  [读取] {len(chunk)} 字节")
+                
+                # 重置超时计时（因为收到了新数据）
+                start_time = time.time()
+                wait_time = read_timeout  # 后续只等待较短时间
+            else:
+                # 没有数据，短暂等待
+                time.sleep(0.1)
+        
+        # 打印所有接收到的数据
+        if len(all_data) > 0:
+            print(f"\n[UART接收] 总共 {len(all_data)} 字节:")
+            print(f"  HEX: {all_data.hex()}")
+            try:
+                # 尝试解码为ASCII
+                text = all_data.decode('ascii', errors='ignore')
+                if text.strip():
+                    print(f"  ASCII:\n{text}")
+            except:
+                pass
+        else:
+            print("[UART接收] 无数据")
+        
+        return all_data
+
+    
+    def start_upgrade(self, firmware_size, retry=0):
         """
         开始升级会话
         
         Args:
             firmware_size: 固件大小
+            retry: 当前重试次数
             
         Returns:
             成功返回True
         """
-        print(f"\n开始升级会话 (固件大小: {firmware_size} 字节)...")
+        if retry == 0:
+            print(f"\n开始升级会话 (固件大小: {firmware_size} 字节)...")
+        else:
+            print(f"  [重试 {retry}/{self.retry_count}] 开始升级会话...")
         
         # 构建开始命令帧（4字节大端格式的固件大小）
         data = struct.pack('>I', firmware_size)
@@ -203,16 +295,22 @@ class UARTUpgrader:
             print("升级会话已启动")
             return True
         else:
+            # 如果失败且还有重试次数
+            if retry < self.retry_count:
+                time.sleep(0.2)  # 重试前等待
+                return self.start_upgrade(firmware_size, retry + 1)
+            
             print("启动升级会话失败")
             return False
     
-    def send_data_packet(self, sequence, data):
+    def send_data_packet(self, sequence, data, retry=0):
         """
-        发送数据包
+        发送数据包（带重试机制）
         
         Args:
             sequence: 序号
             data: 数据
+            retry: 当前重试次数
             
         Returns:
             成功返回True
@@ -220,7 +318,16 @@ class UARTUpgrader:
         frame = self.build_frame(CMD_DATA_PACKET, data, sequence)
         self.send_frame(frame)
         
-        return self.wait_ack()
+        if self.wait_ack():
+            return True
+        
+        # 如果失败且还有重试次数
+        if retry < self.retry_count:
+            print(f"  [重试 {retry + 1}/{self.retry_count}]", end='')
+            time.sleep(0.1)  # 重试前等待
+            return self.send_data_packet(sequence, data, retry + 1)
+        
+        return False
     
     def end_upgrade(self, firmware_crc):
         """
@@ -309,8 +416,12 @@ class UARTUpgrader:
             sequence += 1
             offset += packet_size
             
-            # 短暂延时，避免过快
-            time.sleep(0.01)
+            # 数据包之间的延时
+            # 每10个包增加额外延时，给设备更多处理时间
+            if sequence % 10 == 0:
+                time.sleep(self.packet_delay * 5)  # 第10、20、30...包后延时更长
+            else:
+                time.sleep(self.packet_delay)
         
         # 结束升级
         if not self.end_upgrade(firmware_crc):
@@ -340,6 +451,12 @@ def main():
                         help='波特率 (默认: 115200)')
     parser.add_argument('-t', '--timeout', type=float, default=2.0,
                         help='超时时间（秒，默认: 2.0）')
+    parser.add_argument('-d', '--debug', action='store_true',
+                        help='显示调试信息')
+    parser.add_argument('-r', '--retry', type=int, default=3,
+                        help='失败重试次数（默认: 3）')
+    parser.add_argument('--delay', type=float, default=0.05,
+                        help='数据包延时（秒，默认: 0.05）')
     
     args = parser.parse_args()
     
@@ -349,7 +466,8 @@ def main():
         return 1
     
     # 创建升级器
-    upgrader = UARTUpgrader(args.port, args.baudrate, args.timeout)
+    upgrader = UARTUpgrader(args.port, args.baudrate, args.timeout, 
+                           args.debug, args.retry, args.delay)
     
     # 打开串口
     if not upgrader.open():
@@ -371,6 +489,8 @@ def main():
         return 1
         
     finally:
+        # 读取并打印升级完成后设备的输出信息
+        upgrader.uart_send_back(wait_time=2.0, read_timeout=0.5)
         # 关闭串口
         upgrader.close()
 

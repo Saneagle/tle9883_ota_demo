@@ -128,8 +128,9 @@ sint32 main(void)
     (void) PMU_serviceFailSafeWatchdog();
     
     /* 处理固件升级状态机 */
-    UART_Upgrade_Process();
+    // UART_Upgrade_Process();
     
+		
     /* 检查升级是否完成 */
     if (UART_Upgrade_GetState() == UPGRADE_COMPLETE)
     {
@@ -137,7 +138,7 @@ sint32 main(void)
       static uint32_t jump_delay = 0;
       jump_delay++;
       
-      if (jump_delay > 3000000)  /* 延时约3秒 */
+      if (jump_delay > 30)  /* 延时约3秒 */
       {
         printf("\r\nJumping to upgraded application...\r\n\r\n");
         
@@ -184,18 +185,18 @@ void uart_receive()
   
   /* 旧的缓冲区处理代码（如果需要保留） */
   /* Check for buffer overflow */
-  if (u8_readCnt < BUFFER_SIZE)
-  {
-    u8_buffer[u8_readCnt] = received_byte;
+  // if (u8_readCnt < BUFFER_SIZE)
+  // {
+  //   u8_buffer[u8_readCnt] = received_byte;
     
-    /* Echo byte to stdout to show character on console */
-    /* printf("%c", u8_buffer[u8_readCnt]); */  /* 注释掉回显，避免干扰协议 */
+  //   /* Echo byte to stdout to show character on console */
+  //   /* printf("%c", u8_buffer[u8_readCnt]); */  /* 注释掉回显，避免干扰协议 */
     
-    u8_readCnt++;
-  }
-  else
-  {
-    /* Receive buffer is full -> handle command without newline */
-    b_cmdTrigger = true;
-  }
+  //   u8_readCnt++;
+  // }
+  // else
+  // {
+  //   /* Receive buffer is full -> handle command without newline */
+  //   b_cmdTrigger = true;
+  // }
 }

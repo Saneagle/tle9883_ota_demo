@@ -44,8 +44,12 @@
 #define FLASH_BUFFER_SIZE       (FLASH_PAGE_SIZE * 4)  /* Flash缓冲区 */
 
 /* 升级目标地址（APP2的地址） */
-#define UPGRADE_TARGET_ADDR     0x11004000  /* APP2起始地址（16KB偏移） */
+#define UPGRADE_TARGET_ADDR     0x12002000  /* APP2起始地址（UBSL/FLASH1区域） */
 #define MAX_UPGRADE_SIZE        (16 * 1024) /* 最大升级文件大小：16KB */
+
+/* NVM操作返回值定义（基于bootrom.h文档） */
+#define NVM_OP_STS_FLASH_0_BUSY  1         /* FLASH0后台RWW操作成功触发 */
+#define NVM_OP_STS_FLASH_1_BUSY  2         /* FLASH1后台RWW操作成功触发 */
 
 /* 协议帧结构定义 */
 #define FRAME_HEADER_SIZE       5       /* 帧头大小 */

@@ -19,6 +19,9 @@
 #include "bootrom.h"
 #include "error_codes.h"
 #include "app_jump.h"
+#include "pmu.h"
+#include "cmsis_misra.h"
+#include "uart.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -28,9 +31,9 @@
 #define FRAME_HEADER            0x5A    /* 帧头标识 */
 #define RX_TIMEOUT_MS           5000    /* 接收超时（毫秒） */
 
-/* NVM操作相关 */
+/* NVM操作相关 - 参考 NVM_PROG_UCODE_EXAMPLE_TLE989X */
 #define NVM_OPTIONS_NONE        0x00
-#define NVM_SEG_PROT_CODE_NO_ERASE  0x43219876u  /* UCODE段写保护密码 */
+#define NVM_OPTIONS_CORR_ACT    0x01    /* 启用纠错操作 */
 
 /*******************************************************************************
 **                         本地类型定义                                       **
@@ -82,7 +85,7 @@ void UART_Upgrade_Init(void)
     g_rx_data_index = 0;
     g_flash_buf_index = 0;
     
-    printf("UART Upgrade Module Initialized\r\n");
+    // printf("UART Upgrade Module Initialized\r\n");  /* 注释掉，避免与升级协议冲突 */
 }
 
 /**
@@ -181,7 +184,7 @@ void UART_Upgrade_Process(void)
         /* 简单的超时处理（需要根据实际定时调整） */
         if (g_timeout_counter > RX_TIMEOUT_MS)
         {
-            printf("Upgrade timeout, aborting...\r\n");
+            // printf("Upgrade timeout, aborting...\r\n");  /* 注释掉 */
             UART_Upgrade_Abort();
         }
     }
@@ -194,15 +197,15 @@ void UART_Upgrade_Process(void)
  */
 sint32 UART_Upgrade_Start(uint32 total_size)
 {
-    printf("\r\n========================================\r\n");
-    printf("Starting Firmware Upgrade Session\r\n");
-    printf("Target Size: %u bytes\r\n", (unsigned int)total_size);
-    printf("Target Address: 0x%08X\r\n", (unsigned int)UPGRADE_TARGET_ADDR);
+    // printf("\r\n========================================\r\n");
+    // printf("Starting Firmware Upgrade Session\r\n");
+    // printf("Target Size: %u bytes\r\n", (unsigned int)total_size);
+    // printf("Target Address: 0x%08X\r\n", (unsigned int)UPGRADE_TARGET_ADDR);
     
     /* 检查大小 */
     if (total_size > MAX_UPGRADE_SIZE)
     {
-        printf("ERROR: Size exceeds maximum (%u bytes)\r\n", MAX_UPGRADE_SIZE);
+        // printf("ERROR: Size exceeds maximum (%u bytes)\r\n", MAX_UPGRADE_SIZE);  /* 注释掉 */
         g_session.last_error = ERR_UPGRADE_SIZE;
         return -1;
     }
@@ -216,18 +219,18 @@ sint32 UART_Upgrade_Start(uint32 total_size)
     g_flash_buf_index = 0;
     
     /* 擦除Flash */
-    printf("Erasing target Flash area...\r\n");
+    // printf("Erasing target Flash area...\r\n");
     if (UART_Upgrade_EraseFlash() != 0)
     {
-        printf("ERROR: Flash erase failed\r\n");
+        // printf("ERROR: Flash erase failed\r\n");
         g_session.last_error = ERR_UPGRADE_FLASH_ERASE;
         g_session.state = UPGRADE_ERROR;
         return -2;
     }
     
-    printf("Flash erased successfully\r\n");
-    printf("Ready to receive data packets\r\n");
-    printf("========================================\r\n\r\n");
+    // printf("Flash erased successfully\r\n");
+    // printf("Ready to receive data packets\r\n");
+    // printf("========================================\r\n\r\n");
     
     g_session.state = UPGRADE_RECEIVING;
     g_session.crc_calculated = 0xFFFF;  /* CRC初始值 */
@@ -251,15 +254,15 @@ sint32 UART_Upgrade_DataPacket(uint8 sequence, const uint8* data, uint16 length)
     /* 检查状态 */
     if (g_session.state != UPGRADE_RECEIVING)
     {
-        printf("ERROR: Not in receiving state\r\n");
+        // printf("ERROR: Not in receiving state\r\n");  /* 注释掉 */
         return -1;
     }
     
     /* 检查序号 */
     if (sequence != (g_session.expected_seq & 0xFF))
     {
-        printf("ERROR: Sequence mismatch. Expected %u, got %u\r\n", 
-               g_session.expected_seq & 0xFF, sequence);
+        // printf("ERROR: Sequence mismatch. Expected %u, got %u\r\n",   /* 注释掉 */
+        //        g_session.expected_seq & 0xFF, sequence);
         g_session.last_error = ERR_UPGRADE_SEQUENCE;
         return -2;
     }
@@ -267,7 +270,7 @@ sint32 UART_Upgrade_DataPacket(uint8 sequence, const uint8* data, uint16 length)
     /* 检查是否超过总大小 */
     if ((g_session.received_size + length) > g_session.total_size)
     {
-        printf("ERROR: Data exceeds total size\r\n");
+        // printf("ERROR: Data exceeds total size\r\n");  /* 注释掉 */
         g_session.last_error = ERR_UPGRADE_SIZE;
         return -3;
     }
@@ -286,8 +289,8 @@ sint32 UART_Upgrade_DataPacket(uint8 sequence, const uint8* data, uint16 length)
             ret = FlushFlashBuffer();
             if (ret != 0)
             {
-                printf("ERROR: Flash write failed at offset 0x%08X\r\n", 
-                       (unsigned int)g_session.received_size);
+                // printf("ERROR: Flash write failed at offset 0x%08X\r\n",   /* 注释掉 */
+                //        (unsigned int)g_session.received_size);
                 g_session.last_error = ERR_UPGRADE_FLASH_WRITE;
                 g_session.state = UPGRADE_ERROR;
                 return -4;
@@ -301,14 +304,14 @@ sint32 UART_Upgrade_DataPacket(uint8 sequence, const uint8* data, uint16 length)
     g_session.expected_seq++;
     g_timeout_counter = 0;  /* 重置超时计数 */
     
-    /* 打印进度 */
-    if ((g_session.packet_count % 10) == 0)
-    {
-        printf("Progress: %u/%u bytes (%u%%)\r\n", 
-               (unsigned int)g_session.received_size,
-               (unsigned int)g_session.total_size,
-               UART_Upgrade_GetProgress());
-    }
+    /* 打印进度 - 注释掉，避免与升级协议冲突 */
+    // if ((g_session.packet_count % 10) == 0)
+    // {
+    //     printf("Progress: %u/%u bytes (%u%%)\r\n", 
+    //            (unsigned int)g_session.received_size,
+    //            (unsigned int)g_session.total_size,
+    //            UART_Upgrade_GetProgress());
+    // }
     
     return 0;
 }
@@ -322,22 +325,16 @@ sint32 UART_Upgrade_End(uint16 crc16)
 {
     sint32 ret;
     
-    printf("\r\n========================================\r\n");
-    printf("Finalizing Firmware Upgrade...\r\n");
+    // printf("\r\n========================================\r\n");  /* 注释掉 */
+    // printf("Finalizing Firmware Upgrade...\r\n");
     
     /* 写入剩余缓冲区数据 */
     if (g_flash_buf_index > 0)
     {
-        /* 填充剩余部分为0xFF */
-        while (g_flash_buf_index < FLASH_PAGE_SIZE)
-        {
-            g_flash_buffer[g_flash_buf_index++] = 0xFF;
-        }
-        
         ret = FlushFlashBuffer();
         if (ret != 0)
         {
-            printf("ERROR: Final flash write failed\r\n");
+            // printf("ERROR: Final flash write failed\r\n");  /* 注释掉 */
             g_session.last_error = ERR_UPGRADE_FLASH_WRITE;
             g_session.state = UPGRADE_ERROR;
             return -1;
@@ -345,23 +342,23 @@ sint32 UART_Upgrade_End(uint16 crc16)
     }
     
     /* 校验CRC */
-    printf("Verifying CRC...\r\n");
-    printf("  Calculated CRC: 0x%04X\r\n", g_session.crc_calculated);
-    printf("  Received CRC:   0x%04X\r\n", crc16);
+    // printf("Verifying CRC...\r\n");  /* 注释掉 */
+    // printf("  Calculated CRC: 0x%04X\r\n", g_session.crc_calculated);
+    // printf("  Received CRC:   0x%04X\r\n", crc16);
     
     if (g_session.crc_calculated != crc16)
     {
-        printf("ERROR: CRC mismatch!\r\n");
+        // printf("ERROR: CRC mismatch!\r\n");  /* 注释掉 */
         g_session.last_error = ERR_UPGRADE_CRC;
         g_session.state = UPGRADE_ERROR;
         return -2;
     }
     
-    printf("CRC verification passed!\r\n");
-    printf("Total received: %u bytes\r\n", (unsigned int)g_session.received_size);
-    printf("Total packets: %u\r\n", g_session.packet_count);
-    printf("Firmware upgrade completed successfully!\r\n");
-    printf("========================================\r\n\r\n");
+    // printf("CRC verification passed!\r\n");  /* 注释掉 */
+    // printf("Total received: %u bytes\r\n", (unsigned int)g_session.received_size);
+    // printf("Total packets: %u\r\n", g_session.packet_count);
+    // printf("Firmware upgrade completed successfully!\r\n");
+    // printf("========================================\r\n\r\n");
     
     g_session.state = UPGRADE_COMPLETE;
     
@@ -373,7 +370,7 @@ sint32 UART_Upgrade_End(uint16 crc16)
  */
 void UART_Upgrade_Abort(void)
 {
-    printf("Upgrade aborted!\r\n");
+    // printf("Upgrade aborted!\r\n");  /* 注释掉 */
     g_session.state = UPGRADE_ERROR;
     g_flash_buf_index = 0;
     ResetRxState();
@@ -403,50 +400,55 @@ uint8 UART_Upgrade_GetProgress(void)
 }
 
 /**
- * @brief 擦除目标Flash区域
+ * @brief 擦除目标Flash区域（扇区擦除）
  * @return 成功返回0，失败返回错误码
+ * 
+ * @note 参考 NVM_PROG_UCODE_EXAMPLE_TLE989X
+ * @note Flash1 是 mapped sector，写入时会自动处理擦除
+ * @note 这里执行扇区擦除以确保干净的起始状态
  */
 sint32 UART_Upgrade_EraseFlash(void)
 {
     sint32 ret;
-    uint32 addr;
-    uint32 num_pages;
-    uint32 i;
     
-    /* 计算需要擦除的页数 (每页128字节) */
-    num_pages = (g_session.total_size + FLASH_PAGE_SIZE - 1) / FLASH_PAGE_SIZE;
+    // printf("Erasing target Flash sector at 0x%08X...\r\n", 
+    //        (unsigned int)g_session.target_addr);
     
-    printf("Erasing %u pages...\r\n", (unsigned int)num_pages);
+    /* 禁用中断 */
+    (void)CMSIS_Irq_Dis();
     
-    /* 解除写保护 */
-    ret = user_nvm_ucode_temp_protect_clear(NVM_SEG_PROT_CODE_NO_ERASE);
-    if (ret != ERR_LOG_SUCCESS)
+    /* 打开 SOW (Safe Operating Window) */
+    PMU_serviceFailSafeWatchdogSOW();
+    
+    /* 擦除扇区
+     * 对于 mapped sector，擦除后会自动初始化 map RAM 并选择新的 spare page
+     */
+    ret = user_nvm_sector_erase(g_session.target_addr, NVM_OPTIONS_NONE);
+    
+    /* 关闭 SOW，恢复正常看门狗 */
+    PMU_serviceFailSafeWatchdog();
+    
+    /* 重新使能中断 */
+    CMSIS_Irq_En();
+    
+    /* 检查返回值：
+     * ERR_LOG_SUCCESS (0) = 成功完成
+     * NVM_OP_STS_FLASH_0_BUSY (1) = FLASH0 后台RWW擦除已触发
+     * NVM_OP_STS_FLASH_1_BUSY (2) = FLASH1 后台RWW擦除已触发
+     * 负值 = 错误代码
+     */
+    if (ret < 0)
     {
-        printf("ERROR: Failed to clear write protection: %d\r\n", (int)ret);
+        printf("ERROR: Sector erase failed: %d\r\n", (int)ret);
         return ret;
     }
     
-    /* 逐页擦除 */
-    for (i = 0; i < num_pages; i++)
-    {
-        addr = g_session.target_addr + (i * FLASH_PAGE_SIZE);
-        
-        ret = user_nvm_page_erase(addr, NVM_OPTIONS_NONE);
-        if (ret != ERR_LOG_SUCCESS)
-        {
-            printf("ERROR: Page erase failed at 0x%08X: %d\r\n", (unsigned int)addr, (int)ret);
-            user_nvm_ucode_temp_protect_set(NVM_SEG_PROT_CODE_NO_ERASE);
-            return ret;
-        }
-        
-        if ((i % 10) == 0)
-        {
-            printf("  Erased %u/%u pages\r\n", (unsigned int)i, (unsigned int)num_pages);
-        }
-    }
+    /* 如果是后台RWW擦除（返回值1或2），操作已成功启动
+     * 对于FLASH1 (0x12xxxxxx)，通常返回 NVM_OP_STS_FLASH_1_BUSY (2)
+     * 后台擦除会自动完成，可以继续执行
+     */
     
-    /* 恢复写保护 */
-    user_nvm_ucode_temp_protect_set(NVM_SEG_PROT_CODE_NO_ERASE);
+    // printf("Sector erased successfully\r\n");
     
     return ERR_LOG_SUCCESS;
 }
@@ -457,6 +459,9 @@ sint32 UART_Upgrade_EraseFlash(void)
  * @param data 数据指针
  * @param length 数据长度
  * @return 成功返回0，失败返回错误码
+ * 
+ * @note 参考 NVM_PROG_UCODE_EXAMPLE_TLE989X
+ * @note 不需要写保护密码，使用 SOW 和中断禁用
  */
 sint32 UART_Upgrade_WriteFlash(uint32 offset, const uint8* data, uint16 length)
 {
@@ -466,30 +471,39 @@ sint32 UART_Upgrade_WriteFlash(uint32 offset, const uint8* data, uint16 length)
     
     target_addr = g_session.target_addr + offset;
     
-    /* 设置写参数 */
+    /* 设置写参数 - 启用纠错操作 */
     write_params.data = (uint8*)data;
     write_params.nbyte = length;
-    write_params.options = NVM_OPTIONS_NONE;
+    write_params.options = NVM_OPTIONS_CORR_ACT;  /* 启用纠错操作 */
     
-    /* 解除写保护 */
-    ret = user_nvm_ucode_temp_protect_clear(NVM_SEG_PROT_CODE_NO_ERASE);
-    if (ret != ERR_LOG_SUCCESS)
-    {
-        return ret;
-    }
+    /* 禁用中断 */
+    (void)CMSIS_Irq_Dis();
+    
+    /* 打开 SOW (Safe Operating Window) */
+    PMU_serviceFailSafeWatchdogSOW();
     
     /* 写入Flash */
     ret = user_nvm_page_write(target_addr, &write_params);
     
-    /* 恢复写保护 */
-    user_nvm_ucode_temp_protect_set(NVM_SEG_PROT_CODE_NO_ERASE);
+    /* 关闭 SOW，恢复正常看门狗 */
+    PMU_serviceFailSafeWatchdog();
     
-    if (ret != ERR_LOG_SUCCESS)
+    /* 重新使能中断 */
+    CMSIS_Irq_En();
+    
+    /* 检查返回值：
+     * ERR_LOG_SUCCESS (0) = 成功完成
+     * NVM_OP_STS_FLASH_0_BUSY (1) = FLASH0 后台RWW写入已触发
+     * NVM_OP_STS_FLASH_1_BUSY (2) = FLASH1 后台RWW写入已触发
+     * 负值 = 错误代码
+     */
+    if (ret < 0)
     {
-        printf("Flash write error: %d\r\n", (int)ret);
+        printf("Flash write error at 0x%08X: %d\r\n", (unsigned int)target_addr, (int)ret);
         return ret;
     }
     
+    /* 后台RWW写入会自动完成 */
     return ERR_LOG_SUCCESS;
 }
 
@@ -529,12 +543,15 @@ uint16 UART_Upgrade_CRC16(const uint8* data, uint32 length, uint16 init_val)
 /**
  * @brief 发送应答
  * @param ack_code 应答码
+ * 
+ * @note 使用 UART 硬件发送，不使用 printf
  */
 void UART_Upgrade_SendAck(uint8 ack_code)
 {
     /* 简单的应答：0x5A + ACK码 + CRC16 */
     uint8 response[4];
     uint16 crc;
+    uint8 i;
     
     response[0] = FRAME_HEADER;
     response[1] = ack_code;
@@ -543,8 +560,18 @@ void UART_Upgrade_SendAck(uint8 ack_code)
     response[2] = (uint8)(crc >> 8);
     response[3] = (uint8)(crc & 0xFF);
     
-    /* 发送应答 */
-    printf("%c%c%c%c", response[0], response[1], response[2], response[3]);
+    /* 通过 UART 硬件发送应答（逐字节） */
+    for (i = 0; i < 4; i++)
+    {
+        /* 等待上一个字节发送完成 */
+        while (!UART1_isByteTransmitted())
+        {
+            /* 等待 */
+        }
+        
+        /* 发送字节 */
+        UART1_setTXbuffer(response[i]);
+    }
 }
 
 /*******************************************************************************
@@ -577,8 +604,8 @@ static void ProcessFrame(void)
     
     if (calc_crc != g_rx_frame.crc16)
     {
-        printf("Frame CRC error! Calculated: 0x%04X, Received: 0x%04X\r\n", 
-               calc_crc, g_rx_frame.crc16);
+        // printf("Frame CRC error! Calculated: 0x%04X, Received: 0x%04X\r\n", 
+        //        calc_crc, g_rx_frame.crc16);
         UART_Upgrade_SendAck(ACK_CRC_ERROR);
         return;
     }
@@ -699,7 +726,18 @@ static sint32 FlushFlashBuffer(void)
     }
     
     /* 计算写入偏移 */
-    write_offset = g_session.received_size - g_flash_buf_index + g_rx_data_index;
+    if (g_flash_buf_index == FLASH_PAGE_SIZE)
+    {
+        /* 从数据包处理中调用：buffer已满 */
+        /* 此时received_size还未包含当前buffer中的数据 */
+        write_offset = g_session.received_size;
+    }
+    else
+    {
+        /* 从End函数调用：最后一个不满的页 */
+        /* 此时received_size已包含buffer中的数据 */
+        write_offset = g_session.received_size - g_flash_buf_index;
+    }
     
     /* 如果不满一页，填充0xFF */
     while (g_flash_buf_index < FLASH_PAGE_SIZE)
